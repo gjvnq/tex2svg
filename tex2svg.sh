@@ -20,16 +20,30 @@ DIR=`mktemp -d`
 if [ -r "$SRC" ]; then
     cat "$SRC" > "$DIR/a.tex"
 else
-    echo "\documentclass{standalone}" >> "$DIR/a.tex"
-    echo "\begin{document}" >> "$DIR/a.tex"
-    echo "\$${SRC}\$" >> "$DIR/a.tex"
-    echo "\end{document}" >> "$DIR/a.tex"
+    echo "\\documentclass{standalone}" >> "$DIR/a.tex"
+    echo "\\begin{document}" >> "$DIR/a.tex"
+    echo "\$\\displaystyle ${SRC}\$" >> "$DIR/a.tex"
+    echo "\\end{document}" >> "$DIR/a.tex"
 fi
 
 # Process
 cd $DIR
-pdflatex a.tex > $DIR/pdflatex.log
+
+pdflatex -halt-on-error a.tex > $DIR/pdflatex.log
+retval=$?
+if [ $retval -ne 0 ]; then
+    cat $DIR/pdflatex.log
+    echo "Fail to generate pdf: $retval"
+    exit $retval
+fi
+
 pdf2svg a.pdf a.svg > $DIR/pdf2svg.log
+retval=$?
+if [ $retval -ne 0 ]; then
+    cat $DIR/pdf2svg.log
+    echo "Fail to convert svg to pdf: $retval"
+    exit $retval
+fi
 
 # Output
 
@@ -46,3 +60,5 @@ cd "$BASEDIR"
 
 # Clean temp dir
 rm -r $DIR
+
+exit 0
