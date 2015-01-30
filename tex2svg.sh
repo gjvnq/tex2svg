@@ -21,6 +21,7 @@ if [ -r "$SRC" ]; then
     cat "$SRC" > "$DIR/a.tex"
 else
     echo "\\documentclass{standalone}" >> "$DIR/a.tex"
+    echo "\\usepackage{amsmath}" >> "$DIR/a.tex"
     echo "\\begin{document}" >> "$DIR/a.tex"
     echo "\$\\displaystyle ${SRC}\$" >> "$DIR/a.tex"
     echo "\\end{document}" >> "$DIR/a.tex"
